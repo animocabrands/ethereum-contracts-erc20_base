@@ -1,0 +1,28 @@
+{
+  "name": "@animoca/ethereum-contracts-erc20_base",
+  "version": "0.0.2",
+  "description": "Base ERC20 and ERC20-fees meta-transaction contracts",
+  "scripts": {
+    "compile": "./node_modules/@animoca/ethereum-contracts-core_library/scripts/oz-compile.sh",
+    "test": "./node_modules/@animoca/ethereum-contracts-core_library/scripts/oz-test.sh",
+    "coverage": "./node_modules/@animoca/ethereum-contracts-core_library/scripts/coverage.sh",
+    "migrate": "./node_modules/@animoca/ethereum-contracts-core_library/scripts/migrate.sh"
+  },
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.outblaze.net:blockchain/ethereum/contracts/ethereum-contracts-erc20_base.git"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "erc20"
+  ],
+  "author": "Animoca Brands",
+  "license": "MIT",
+  "dependencies": {
+    "@animoca/ethereum-contracts-core_library": "0.0.2",
+    "@openzeppelin/gsn-helpers": "^0.2.3",
+    "@openzeppelin/gsn-provider": "^0.1.10"
+  }
+}
