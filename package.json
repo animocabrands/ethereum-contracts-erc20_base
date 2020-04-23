@@ -11,7 +11,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git@gitlab.outblaze.net:blockchain/ethereum/contracts/ethereum-contracts-erc20_base.git"
+    "url": "git@github.com:animocabrands/ethereum-contracts-erc20_base.git"
   },
   "keywords": [
     "solidity",
