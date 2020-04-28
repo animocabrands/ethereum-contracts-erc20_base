@@ -1,6 +1,6 @@
-pragma solidity = 0.5.16;
+pragma solidity = 0.6.2;
 
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract WhitelistedOperators is Ownable {
 

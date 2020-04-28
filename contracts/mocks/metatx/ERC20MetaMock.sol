@@ -1,4 +1,4 @@
-pragma solidity = 0.5.16;
+pragma solidity = 0.6.2;
 
 import "../../token/ERC20/ERC20Base.sol";
 import "../../metatx/ERC20Fees.sol";
@@ -11,19 +11,7 @@ contract ERC20MetaMock is ERC20Base, ERC20Fees {
         uint256 initialBalance,
         address gasTokenAddress,
         address payoutWallet
-    ) public ERC20Base(initialBalance) ERC20Fees(gasTokenAddress, payoutWallet) {}
-
-    function name() public view returns (string memory) {
-        return "ERC20Meta";
-    }
-
-    function symbol() public view returns (string memory) {
-        return "E2M";
-    }
-
-    function decimals() public view returns (uint8) {
-        return 18;
-    }
+    ) public ERC20Base(initialBalance, "ERC20Meta", "E2M") ERC20Fees(gasTokenAddress, payoutWallet) {}
 
     function anUnrelayableFunction() public returns (bytes4) {
         _state = _state + 1;
@@ -50,6 +38,7 @@ contract ERC20MetaMock is ERC20Base, ERC20Fees {
         uint256 maxPossibleCharge
     )
         public
+        override
         view
         returns (uint256, bytes memory mem)
     {
@@ -77,5 +66,25 @@ contract ERC20MetaMock is ERC20Base, ERC20Fees {
             nonce,
             approvalData,
             maxPossibleCharge);
+    }
+
+    /**
+     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
+     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
+     */
+    function _msgSender() internal override(Context, ERC20Fees) view returns (address payable) {
+        return super._msgSender();
+    }
+
+    /**
+     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
+     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
+     */
+    function _msgData() internal override(Context, ERC20Fees) view returns (bytes memory) {
+        return super._msgData();
     }
 }

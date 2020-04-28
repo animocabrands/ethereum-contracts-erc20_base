@@ -1,6 +1,6 @@
 {
   "name": "@animoca/ethereum-contracts-erc20_base",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Base ERC20 and ERC20-fees meta-transaction contracts",
   "scripts": {
     "compile": "./node_modules/@animoca/ethereum-contracts-core_library/scripts/oz-compile.sh",
@@ -21,7 +21,7 @@
   "author": "Animoca Brands",
   "license": "MIT",
   "dependencies": {
-    "@animoca/ethereum-contracts-core_library": "0.0.2",
+    "@animoca/ethereum-contracts-core_library": "1.0.0",
     "@openzeppelin/gsn-helpers": "^0.2.3",
     "@openzeppelin/gsn-provider": "^0.1.10"
   }

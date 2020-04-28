@@ -179,43 +179,6 @@ function shouldBehaveLikeERC20Base(name, symbol, decimals, initialSupply, initia
         });
     });
 
-    describe('_burnFrom', function () {
-        const amount = initialSupply;
-        const burner = anotherAccount;
-        const spender = anotherAccount;
-        const allowance = amount.addn(1);
-
-        beforeEach(async function () {
-            await this.token.approve(spender, allowance, { from: initialHolder });
-        });
-
-        it('emits a transfer event', async function () {
-            const receipt = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-            expectEvent(receipt, 'Transfer', {
-                from: initialHolder,
-                to: ZeroAddress,
-                value: amount,
-            });
-        });
-
-        it('emits an approval event', async function () {
-            const receipt = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-            expectEvent(receipt, 'Approval', {
-                owner: initialHolder,
-                spender: spender,
-                value: allowance.sub(amount),
-            });
-        });
-
-        it('updates the allowance amount by deducting the burned amount', async function () {
-            await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-            (await this.token.allowance(initialHolder, spender)).should.be.bignumber.equal(allowance.sub(amount));
-        });
-    })
-
-
     describe('transfer from', function () {
         const spender = recipient;
 

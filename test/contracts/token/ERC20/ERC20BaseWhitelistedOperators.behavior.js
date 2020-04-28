@@ -98,36 +98,6 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
             });
         });
 
-        describe('_burnFrom', function () {
-            const amount = initialSupply;
-            const burner = spender;
-
-            it('emits a transfer event', async function () {
-                const { logs } = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-                expectEvent.inLogs(logs, 'Transfer', {
-                    from: initialHolder,
-                    to: ZERO_ADDRESS,
-                    value: amount,
-                });
-            });
-
-            it('does not emit an approval event', async function () {
-                const { tx } = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-                expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                    owner: initialHolder,
-                    spender: spender,
-                    value: amount,
-                });
-            });
-
-            it('has no effect on the allowance amount of MAX_UINT256', async function () {
-                await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-                (await this.token.allowance(initialHolder, spender)).should.be.bignumber.equal(MAX_UINT256);
-            });
-        });
-
         describe('transfer from', function () {
             describe('when the recipient is not the zero address', function () {
                 const to = recipient;
