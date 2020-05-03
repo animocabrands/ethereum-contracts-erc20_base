@@ -1,6 +1,7 @@
-pragma solidity = 0.6.2;
+pragma solidity ^0.6.6;
 
 import "../../../token/ERC20/ERC20Base.sol";
+import "../../../token/ERC20/IERC20Detailed.sol";
 
 contract ERC20BaseMock is ERC20Base {
 

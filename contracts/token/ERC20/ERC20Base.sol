@@ -1,8 +1,8 @@
-pragma solidity = 0.6.2;
+pragma solidity ^0.6.6;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/introspection/IERC165.sol";
-import "../../access/WhitelistedOperators.sol";
+import "@animoca/ethereum-contracts-core_library/contracts/access/WhitelistedOperators.sol";
 
 abstract contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
     uint256 private constant UINT256_MAX = 2**256 - 1;
