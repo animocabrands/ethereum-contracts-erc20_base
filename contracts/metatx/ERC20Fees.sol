@@ -3,14 +3,14 @@ pragma solidity ^0.6.6;
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/GSN/GSNRecipient.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@animoca/ethereum-contracts-core_library/contracts/payment/PayoutWallet.sol";
 
 /**
     @title ERC20Fees
     @dev a GSNRecipient contract with support for ERC-20 fees
     Note: .
  */
-abstract contract ERC20Fees is GSNRecipient, Ownable
+abstract contract ERC20Fees is GSNRecipient, PayoutWallet
 {
     enum ErrorCodes {
         INSUFFICIENT_BALANCE,
@@ -18,7 +18,6 @@ abstract contract ERC20Fees is GSNRecipient, Ownable
     }
 
     IERC20 public _gasToken;
-    address public _payoutWallet;
     uint public _gasPriceScaling = GAS_PRICE_SCALING_SCALE;
 
     uint constant internal GAS_PRICE_SCALING_SCALE = 1000;
@@ -26,18 +25,12 @@ abstract contract ERC20Fees is GSNRecipient, Ownable
     /**
      * @dev Constructor function
      */
-    constructor(address gasTokenAddress, address payoutWallet) internal {
+    constructor(address gasTokenAddress, address payoutWallet) internal PayoutWallet(payoutWallet) {
         setGasToken(gasTokenAddress);
-        setPayoutWallet(payoutWallet);
     }
 
     function setGasToken(address gasTokenAddress) public onlyOwner {
         _gasToken = IERC20(gasTokenAddress);
-    }
-
-    function setPayoutWallet(address payoutWallet) public onlyOwner {
-        require(payoutWallet != address(this));
-        _payoutWallet = payoutWallet;
     }
 
     function setGasPrice(uint gasPriceScaling) public onlyOwner {

@@ -3,7 +3,7 @@ const { constants, shouldSupportInterfaces } = require('@animoca/ethereum-contra
 const { ZeroAddress } = constants;
 const interfaces = require('../../../../src/interfaces/ERC165');
 
-function shouldBehaveLikeERC20Base(name, symbol, decimals, initialSupply, initialHolder, recipient, [anotherAccount]) {
+function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initialHolder, recipient, [anotherAccount]) {
     describe('details', function () {
         it('has a name', async function () {
             (await this.token.name()).should.be.equal(name);
@@ -462,5 +462,5 @@ function shouldBehaveLikeERC20Base(name, symbol, decimals, initialSupply, initia
 }
 
 module.exports = {
-    shouldBehaveLikeERC20Base
+    shouldBehaveLikeERC20Full
 };

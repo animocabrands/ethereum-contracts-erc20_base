@@ -1,7 +1,7 @@
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { MAX_UINT256, ZERO_ADDRESS } = constants;
 
-function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHolder, recipient, [ spender ]) {
+function shouldBehaveLikeERC20FullWhitelistedOperators(initialSupply, initialHolder, recipient, [ spender ]) {
     describe('ERC20 Base is WhitelistedOperators', function () {
         beforeEach(async function () {
             await this.token.whitelistOperator(spender, true, {from: initialHolder});
@@ -403,5 +403,5 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
 }
 
 module.exports = {
-    shouldBehaveLikeERC20BaseWhitelistedOperators
+    shouldBehaveLikeERC20FullWhitelistedOperators
 };

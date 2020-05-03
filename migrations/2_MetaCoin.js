@@ -1,4 +1,4 @@
-const GasToken = artifacts.require('ERC20BaseMock');
+const GasToken = artifacts.require('ERC20FullMock');
 const MetaCoin = artifacts.require('ERC20MetaMock');
 
 module.exports = async (deployer, network, accounts) => {

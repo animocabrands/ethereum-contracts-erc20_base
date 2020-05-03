@@ -1,17 +1,13 @@
 pragma solidity ^0.6.6;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/introspection/IERC165.sol";
 import "@animoca/ethereum-contracts-core_library/contracts/access/WhitelistedOperators.sol";
+import "./ERC20.sol";
+import "./IERC20Detailed.sol";
 
-abstract contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
+abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
     uint256 private constant UINT256_MAX = 2**256 - 1;
 
-    constructor(
-        uint256 initialBalance,
-        string memory name,
-        string memory symbol
-    ) internal ERC20(name, symbol)
+    constructor(uint256 initialBalance) internal
     {
         _mint(_msgSender(), initialBalance);
     }
@@ -21,7 +17,7 @@ abstract contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
      * @param interfaceId interface id to query
      * @return bool if support the given interface id
      */
-    function supportsInterface(bytes4 interfaceId) public override view returns (bool) {
+    function supportsInterface(bytes4 interfaceId) external virtual override view returns (bool) {
         return (
             // ERC165 interface id
             interfaceId == 0x01ffc9a7 ||

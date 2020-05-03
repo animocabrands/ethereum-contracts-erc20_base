@@ -1,9 +1,9 @@
 pragma solidity ^0.6.6;
 
-import "../../token/ERC20/ERC20Base.sol";
-import "../../metatx/ERC20Fees.sol";
+import "../../../token/ERC20/ERC20Full.sol";
+import "../../../metatx/ERC20Fees.sol";
 
-contract ERC20MetaMock is ERC20Base, ERC20Fees {
+contract ERC20MetaMock is ERC20Full, ERC20Fees {
 
     uint256 public _state = 0;
 
@@ -11,12 +11,24 @@ contract ERC20MetaMock is ERC20Base, ERC20Fees {
         uint256 initialBalance,
         address gasTokenAddress,
         address payoutWallet
-    ) public ERC20Base(initialBalance, "ERC20Meta", "E2M") ERC20Fees(gasTokenAddress, payoutWallet) {}
+    ) public ERC20Full(initialBalance) ERC20Fees(gasTokenAddress, payoutWallet) {}
 
     function anUnrelayableFunction() public returns (bytes4) {
         _state = _state + 1;
         // bytes4(keccak256("anUnrelayableFunction()")) == 0x2f398d8d
         return bytes4(keccak256("anUnrelayableFunction()"));
+    }
+
+    function name() external override view returns (string memory) {
+        return "ERC20Meta";
+    }
+
+    function symbol() external override view returns (string memory) {
+        return "E2M";
+    }
+
+    function decimals() external override view returns (uint8) {
+        return 18;
     }
 
 
