@@ -8,8 +8,7 @@
  * Renamed `ERC20Base` to `ERC20Full`.
 
 ### New features
- * Added openezeppelin-based `ERC20.sol` implementation.
- * Added `IERC20Detailed.sol`.
+ * Added `ERC20.sol`, `IERC20.sol` and `IERC20Detailed.sol`.
  * Added example migrations.
 
 ### Improvements

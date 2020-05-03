@@ -92,9 +92,9 @@ describe('ERC20 Meta', function () {
 
         it('emits an Approval event', async function () {
             await expectEvent(this.receipt, 'Approval', {
-                owner: owner,
-                spender: spender,
-                value: amountBN
+                _owner: owner,
+                _spender: spender,
+                _value: amountBN
             });
         });
     };
@@ -112,9 +112,9 @@ describe('ERC20 Meta', function () {
 
         it('emits a Transfer event', async function () {
             await expectEvent(this.receipt, 'Transfer', {
-                from: from,
-                to: to,
-                value: amountBN
+                _from: from,
+                _to: to,
+                _value: amountBN
             });
         });
     };

@@ -2,8 +2,8 @@ pragma solidity ^0.6.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/GSN/GSNRecipient.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@animoca/ethereum-contracts-core_library/contracts/payment/PayoutWallet.sol";
+import "../token/ERC20/IERC20.sol";
 
 /**
     @title ERC20Fees

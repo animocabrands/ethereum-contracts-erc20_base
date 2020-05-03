@@ -63,9 +63,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                     const receipt = await this.token.transfer(to, amount, { from: initialHolder });
 
                     expectEvent(receipt, 'Transfer', {
-                        from: initialHolder,
-                        to: to,
-                        value: amount,
+                        _from: initialHolder,
+                        _to: to,
+                        _value: amount,
                     });
                 });
             });
@@ -91,9 +91,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                     const receipt = await this.token.approve(spender, amount, { from: initialHolder });
 
                     expectEvent(receipt, 'Approval', {
-                        owner: initialHolder,
-                        spender: spender,
-                        value: amount,
+                        _owner: initialHolder,
+                        _spender: spender,
+                        _value: amount,
                     });
                 });
 
@@ -123,9 +123,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                     const receipt = await this.token.approve(spender, amount, { from: initialHolder });
 
                     expectEvent(receipt, 'Approval', {
-                        owner: initialHolder,
-                        spender: spender,
-                        value: amount,
+                        _owner: initialHolder,
+                        _spender: spender,
+                        _value: amount,
                     });
                 });
 
@@ -167,9 +167,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
             const receipt = await this.token.underscoreApprove(initialHolder, spender, amount, { from: initialHolder });
 
             expectEvent(receipt, 'Approval', {
-                owner: initialHolder,
-                spender: spender,
-                value: amount,
+                _owner: initialHolder,
+                _spender: spender,
+                _value: amount,
             });
         });
 
@@ -208,9 +208,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                         const receipt = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                         expectEvent(receipt, 'Transfer', {
-                            from: initialHolder,
-                            to: to,
-                            value: amount,
+                            _from: initialHolder,
+                            _to: to,
+                            _value: amount,
                         });
                     });
 
@@ -218,9 +218,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                         const receipt = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                         expectEvent(receipt, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: await this.token.allowance(initialHolder, spender),
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: await this.token.allowance(initialHolder, spender),
                         });
                     });
                 });
@@ -295,9 +295,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                         const receipt = await this.token.decreaseAllowance(spender, approvedAmount, { from: initialHolder });
 
                         expectEvent(receipt, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: new BN(0),
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: new BN(0),
                         });
                     });
 
@@ -339,9 +339,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                         const receipt = await this.token.decreaseAllowance(spender, approvedAmount, { from: initialHolder });
 
                         expectEvent(receipt, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: new BN(0),
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: new BN(0),
                         });
                     });
 
@@ -385,9 +385,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                     const receipt = await this.token.increaseAllowance(spender, amount, { from: initialHolder });
 
                     expectEvent(receipt, 'Approval', {
-                        owner: initialHolder,
-                        spender: spender,
-                        value: amount,
+                        _owner: initialHolder,
+                        _spender: spender,
+                        _value: amount,
                     });
                 });
 
@@ -417,9 +417,9 @@ function shouldBehaveLikeERC20Full(name, symbol, decimals, initialSupply, initia
                     const receipt = await this.token.increaseAllowance(spender, amount, { from: initialHolder });
 
                     expectEvent(receipt, 'Approval', {
-                        owner: initialHolder,
-                        spender: spender,
-                        value: amount,
+                        _owner: initialHolder,
+                        _spender: spender,
+                        _value: amount,
                     });
                 });
 

@@ -7,6 +7,10 @@ contract ERC20MetaMock is ERC20Full, ERC20Fees {
 
     uint256 public _state = 0;
 
+    string public override name = "ERC20Meta";
+    string public override symbol = "E2M";
+    uint8 public override decimals = 18;
+
     constructor (
         uint256 initialBalance,
         address gasTokenAddress,
@@ -18,19 +22,6 @@ contract ERC20MetaMock is ERC20Full, ERC20Fees {
         // bytes4(keccak256("anUnrelayableFunction()")) == 0x2f398d8d
         return bytes4(keccak256("anUnrelayableFunction()"));
     }
-
-    function name() external override view returns (string memory) {
-        return "ERC20Meta";
-    }
-
-    function symbol() external override view returns (string memory) {
-        return "E2M";
-    }
-
-    function decimals() external override view returns (uint8) {
-        return 18;
-    }
-
 
 ///////////////////////// GSNRecipient implementation //////////////////////////
 
