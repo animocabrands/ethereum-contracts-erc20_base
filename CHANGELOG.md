@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.0 (03/05/2020)
+
+### Breaking changes
+ * Migration to `@animoca/ethereum-contracts-core_library:1.0.0` with `solc:0.6.x` and `@openzeppelin/contracts:3.x`.
+ * Moved `WhitelistedOperators.sol` to `@animoca/ethereum-contracts-core_library`.
+ * Renamed `ERC20Base` to `ERC20Full`.
+
+### New features
+ * Added `ERC20.sol`, `IERC20.sol` and `IERC20Detailed.sol`.
+ * Added example migrations.
+
+### Improvements
+ * `ERC20Fees` now inherits `PayoutWallet` contract.
+
 ## 0.0.2 (14/04/2020)
 
 ### Breaking changes

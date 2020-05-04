@@ -1,10 +1,10 @@
-pragma solidity = 0.5.16;
+pragma solidity ^0.6.6;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/introspection/IERC165.sol";
-import "../../access/WhitelistedOperators.sol";
+import "@animoca/ethereum-contracts-core_library/contracts/access/WhitelistedOperators.sol";
+import "./ERC20.sol";
+import "./IERC20Detailed.sol";
 
-contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
+abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
     uint256 private constant UINT256_MAX = 2**256 - 1;
 
     constructor(uint256 initialBalance) internal
@@ -17,7 +17,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
      * @param interfaceId interface id to query
      * @return bool if support the given interface id
      */
-    function supportsInterface(bytes4 interfaceId) public view returns (bool) {
+    function supportsInterface(bytes4 interfaceId) external virtual override view returns (bool) {
         return (
             // ERC165 interface id
             interfaceId == 0x01ffc9a7 ||
@@ -34,7 +34,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
         );
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
+    function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         address msgSender = _msgSender();
 
         // bypass the internal allowance manipulation and checks for the
@@ -49,7 +49,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
         return true;
     }
 
-    function allowance(address owner, address spender) public view returns (uint256) {
+    function allowance(address owner, address spender) public override view returns (uint256) {
         if (isOperator(spender)) {
             // allow the front-end to determine whether or not an approval is
             // necessary, given that the whitelisted operator status of the
@@ -62,7 +62,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
         }
     }
 
-    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
+    function increaseAllowance(address spender, uint256 addedValue) public override returns (bool) {
         if (isOperator(spender)) {
             // bypass the internal allowance manipulation and checks for the
             // whitelisted operator (i.e. spender). as a side-effect, the
@@ -74,7 +74,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
         }
     }
 
-    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    function decreaseAllowance(address spender, uint256 subtractedValue) public override returns (bool) {
         if (isOperator(spender)) {
             // bypass the internal allowance manipulation and checks for the
             // whitelisted operator (i.e. spender). as a side-effect, the
@@ -86,7 +86,7 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
         }
     }
 
-    function _approve(address owner, address spender, uint256 value) internal {
+    function _approve(address owner, address spender, uint256 value) internal override {
         if (isOperator(spender)) {
             // bypass the internal allowance manipulation and checks for the
             // whitelisted operator (i.e. spender). as a side-effect, the
@@ -97,21 +97,4 @@ contract ERC20Base is IERC165, ERC20, WhitelistedOperators {
             super._approve(owner, spender, value);
         }
     }
-
-    function _burnFrom(address account, uint256 amount) internal {
-        if (isOperator(_msgSender())) {
-            // bypass the internal allowance manipulation and checks for the
-            // whitelisted operator (i.e. _msgSender()). as a side-effect, the
-            // 'Approval' event will not be emitted since the allowance was not
-            // updated.
-            _burn(account, amount);
-            return;
-        } else {
-            super._burnFrom(account, amount);
-        }
-    }
-
-    function name() public view returns (string memory); 
-    function symbol() public view returns (string memory);
-    function decimals() public view returns (uint8);
 }

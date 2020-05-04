@@ -1,7 +1,7 @@
 const { BN, constants, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
 const { MAX_UINT256, ZERO_ADDRESS } = constants;
 
-function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHolder, recipient, [ spender ]) {
+function shouldBehaveLikeERC20FullWhitelistedOperators(initialSupply, initialHolder, recipient, [ spender ]) {
     describe('ERC20 Base is WhitelistedOperators', function () {
         beforeEach(async function () {
             await this.token.whitelistOperator(spender, true, {from: initialHolder});
@@ -16,9 +16,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                         const { tx } = await this.token.approve(spender, amount, { from: initialHolder });
 
                         expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: amount,
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: amount,
                         });
                     });
 
@@ -50,9 +50,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                         const { tx } = await this.token.approve(spender, amount, { from: initialHolder });
 
                         expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: amount,
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: amount,
                         });
                     });
 
@@ -86,44 +86,14 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                 const { tx } = await this.token.underscoreApprove(initialHolder, spender, amount, { from: initialHolder });
 
                 expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                    owner: initialHolder,
-                    spender: spender,
-                    value: amount,
+                    _owner: initialHolder,
+                    _spender: spender,
+                    _value: amount,
                 });
             });
 
             it('has no effect on the allowance amount of MAX_UINT256', async function () {
                 await this.token.underscoreApprove(initialHolder, spender, amount, { from: initialHolder });
-                (await this.token.allowance(initialHolder, spender)).should.be.bignumber.equal(MAX_UINT256);
-            });
-        });
-
-        describe('_burnFrom', function () {
-            const amount = initialSupply;
-            const burner = spender;
-
-            it('emits a transfer event', async function () {
-                const { logs } = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-                expectEvent.inLogs(logs, 'Transfer', {
-                    from: initialHolder,
-                    to: ZERO_ADDRESS,
-                    value: amount,
-                });
-            });
-
-            it('does not emit an approval event', async function () {
-                const { tx } = await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
-
-                expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                    owner: initialHolder,
-                    spender: spender,
-                    value: amount,
-                });
-            });
-
-            it('has no effect on the allowance amount of MAX_UINT256', async function () {
-                await this.token.underscoreBurnFrom(initialHolder, amount, { from: burner });
                 (await this.token.allowance(initialHolder, spender)).should.be.bignumber.equal(MAX_UINT256);
             });
         });
@@ -158,9 +128,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { logs } = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                             expectEvent.inLogs(logs, 'Transfer', {
-                                from: initialHolder,
-                                to: to,
-                                value: amount,
+                                _from: initialHolder,
+                                _to: to,
+                                _value: amount,
                             });
                         });
 
@@ -168,9 +138,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { tx } = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                             expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                                owner: initialHolder,
-                                spender: spender,
-                                value: await this.token.allowance(initialHolder, spender),
+                                _owner: initialHolder,
+                                _spender: spender,
+                                _value: await this.token.allowance(initialHolder, spender),
                             });
                         });
                     });
@@ -213,9 +183,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { logs } = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                             expectEvent.inLogs(logs, 'Transfer', {
-                                from: initialHolder,
-                                to: to,
-                                value: amount,
+                                _from: initialHolder,
+                                _to: to,
+                                _value: amount,
                             });
                         });
 
@@ -223,9 +193,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { tx } = await this.token.transferFrom(initialHolder, to, amount, { from: spender });
 
                             expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                                owner: initialHolder,
-                                spender: spender,
-                                value: await this.token.allowance(initialHolder, spender),
+                                _owner: initialHolder,
+                                _spender: spender,
+                                _value: await this.token.allowance(initialHolder, spender),
                             });
                         });
                     });
@@ -277,9 +247,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { tx } = await this.token.decreaseAllowance(spender, approvedAmount, { from: initialHolder });
 
                             expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                                owner: initialHolder,
-                                spender: spender,
-                                value: new BN(0),
+                                _owner: initialHolder,
+                                _spender: spender,
+                                _value: new BN(0),
                             });
                         });
 
@@ -327,9 +297,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                             const { tx } = await this.token.decreaseAllowance(spender, approvedAmount, { from: initialHolder });
 
                             expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                                owner: initialHolder,
-                                spender: spender,
-                                value: new BN(0),
+                                _owner: initialHolder,
+                                _spender: spender,
+                                _value: new BN(0),
                             });
                         });
 
@@ -367,9 +337,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                         const { tx } = await this.token.increaseAllowance(spender, amount, { from: initialHolder });
 
                         expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: amount,
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: amount,
                         });
                     });
 
@@ -401,9 +371,9 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
                         const { tx } = await this.token.increaseAllowance(spender, amount, { from: initialHolder });
 
                         expectEvent.not.inTransaction(tx, this.token, 'Approval', {
-                            owner: initialHolder,
-                            spender: spender,
-                            value: amount,
+                            _owner: initialHolder,
+                            _spender: spender,
+                            _value: amount,
                         });
                     });
 
@@ -433,5 +403,5 @@ function shouldBehaveLikeERC20BaseWhitelistedOperators(initialSupply, initialHol
 }
 
 module.exports = {
-    shouldBehaveLikeERC20BaseWhitelistedOperators
+    shouldBehaveLikeERC20FullWhitelistedOperators
 };

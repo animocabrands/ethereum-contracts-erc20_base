@@ -1,16 +1,16 @@
-pragma solidity = 0.5.16;
+pragma solidity ^0.6.6;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/GSN/GSNRecipient.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+import "@animoca/ethereum-contracts-core_library/contracts/payment/PayoutWallet.sol";
+import "../token/ERC20/IERC20.sol";
 
 /**
     @title ERC20Fees
     @dev a GSNRecipient contract with support for ERC-20 fees
     Note: .
  */
-contract ERC20Fees is GSNRecipient, Ownable
+abstract contract ERC20Fees is GSNRecipient, PayoutWallet
 {
     enum ErrorCodes {
         INSUFFICIENT_BALANCE,
@@ -18,7 +18,6 @@ contract ERC20Fees is GSNRecipient, Ownable
     }
 
     IERC20 public _gasToken;
-    address public _payoutWallet;
     uint public _gasPriceScaling = GAS_PRICE_SCALING_SCALE;
 
     uint constant internal GAS_PRICE_SCALING_SCALE = 1000;
@@ -26,18 +25,12 @@ contract ERC20Fees is GSNRecipient, Ownable
     /**
      * @dev Constructor function
      */
-    constructor(address gasTokenAddress, address payoutWallet) internal {
+    constructor(address gasTokenAddress, address payoutWallet) internal PayoutWallet(payoutWallet) {
         setGasToken(gasTokenAddress);
-        setPayoutWallet(payoutWallet);
     }
 
     function setGasToken(address gasTokenAddress) public onlyOwner {
         _gasToken = IERC20(gasTokenAddress);
-    }
-
-    function setPayoutWallet(address payoutWallet) public onlyOwner {
-        require(payoutWallet != address(this));
-        _payoutWallet = payoutWallet;
     }
 
     function setGasPrice(uint gasPriceScaling) public onlyOwner {
@@ -67,6 +60,8 @@ contract ERC20Fees is GSNRecipient, Ownable
         uint256 maxPossibleCharge
     )
         public
+        virtual
+        override
         view
         returns (uint256, bytes memory)
     {
@@ -83,7 +78,7 @@ contract ERC20Fees is GSNRecipient, Ownable
      * actual charge, necessary because we cannot predict how much gas the execution will actually need. The remainder
      * is returned to the user in {_postRelayedCall}.
      */
-    function _preRelayedCall(bytes memory context) internal returns (bytes32) {
+    function _preRelayedCall(bytes memory context) internal override returns (bytes32) {
         (address from, uint256 maxPossibleCharge) = abi.decode(context, (address, uint256));
 
         // The maximum token charge is pre-charged from the user
@@ -93,17 +88,37 @@ contract ERC20Fees is GSNRecipient, Ownable
     /**
      * @dev Returns to the user the extra amount that was previously charged, once the actual execution cost is known.
      */
-    function _postRelayedCall(bytes memory context, bool, uint256 actualCharge, bytes32) internal {
+    function _postRelayedCall(bytes memory context, bool, uint256 actualCharge, bytes32) internal override {
         (address from, uint256 maxPossibleCharge, uint256 transactionFee, uint256 gasPrice) =
             abi.decode(context, (address, uint256, uint256, uint256));
 
         // actualCharge is an _estimated_ charge, which assumes postRelayedCall will use all available gas.
         // This implementation's gas cost can be roughly estimated as 10k gas, for the two SSTORE operations in an
         // ERC20 transfer.
-        uint256 overestimation = _computeCharge(SafeMath.sub(POST_RELAYED_CALL_MAX_GAS, 10000), gasPrice, transactionFee);
+        uint256 overestimation = _computeCharge(SafeMath.sub(_POST_RELAYED_CALL_MAX_GAS, 10000), gasPrice, transactionFee);
         actualCharge = SafeMath.sub(actualCharge, overestimation);
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
         require(_gasToken.transferFrom(_payoutWallet, from, SafeMath.sub(maxPossibleCharge, actualCharge) * _gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+    }
+
+    /**
+     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
+     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
+     */
+    function _msgSender() internal virtual override(Context, GSNRecipient) view returns (address payable) {
+        return super._msgSender();
+    }
+
+    /**
+     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
+     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
+     */
+    function _msgData() internal virtual override(Context, GSNRecipient) view returns (bytes memory) {
+        return super._msgData();
     }
 }
