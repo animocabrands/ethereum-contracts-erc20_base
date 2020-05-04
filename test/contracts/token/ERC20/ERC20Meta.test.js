@@ -4,7 +4,7 @@ const { ZERO_ADDRESS } = constants;
 const { GSNDevProvider } = require('@openzeppelin/gsn-provider');
 const { fundRecipient } = require('@openzeppelin/gsn-helpers');
 
-const ERC20BaseMock = contract.fromArtifact('ERC20BaseMock');
+const ERC20FullMock = contract.fromArtifact('ERC20FullMock');
 const ERC20MetaMock = contract.fromArtifact('ERC20MetaMock');
 
 describe('ERC20 Meta', function () {
@@ -61,7 +61,7 @@ describe('ERC20 Meta', function () {
     });
 
     beforeEach(async function () {
-        this.ERC20 = await ERC20BaseMock.new(
+        this.ERC20 = await ERC20FullMock.new(
             initialSupplyGasToken,
             { from: initialHolder }
         );
@@ -92,9 +92,9 @@ describe('ERC20 Meta', function () {
 
         it('emits an Approval event', async function () {
             await expectEvent(this.receipt, 'Approval', {
-                owner: owner,
-                spender: spender,
-                value: amountBN
+                _owner: owner,
+                _spender: spender,
+                _value: amountBN
             });
         });
     };
@@ -112,9 +112,9 @@ describe('ERC20 Meta', function () {
 
         it('emits a Transfer event', async function () {
             await expectEvent(this.receipt, 'Transfer', {
-                from: from,
-                to: to,
-                value: amountBN
+                _from: from,
+                _to: to,
+                _value: amountBN
             });
         });
     };
@@ -168,28 +168,6 @@ describe('ERC20 Meta', function () {
 
 
     //////////////////////////////// ERC20Fees /////////////////////////////////////
-
-
-    describe('ERC20Fees::setPayoutWallet()', function () {
-        context('when called by owner', function () {
-            it('must change payout wallet', async function () {
-                await sendWithoutGSN(
-                    this.token.contract.methods.setPayoutWallet(otherAccounts[0]),
-                    initialHolder);
-                const newWallet = await this.token.contract.methods._payoutWallet().call();
-                newWallet.should.be.equal(otherAccounts[0]);
-            });
-        });
-
-        context('when called by non-owner', function () {
-            it('reverts', async function () {
-                await expectRevert.unspecified(
-                    sendWithoutGSN(
-                        this.token.contract.methods.setPayoutWallet(otherAccounts[0]),
-                        executor));
-            });
-        });
-    });
 
     describe('ERC20Fees::setGasToken()', function () {
         context('when called by owner', function () {
@@ -698,10 +676,10 @@ describe('ERC20 Meta', function () {
     });
 
 
-    ////////////////////////////////// ERC20Base ///////////////////////////////////
+    ////////////////////////////////// ERC20Full ///////////////////////////////////
 
 
-    describe('ERC20Base::anUrelayableFunction()', function () {
+    describe('ERC20Full::anUrelayableFunction()', function () {
         context('when the sender has enough gas tokens to pay the tx fees', function () {
             beforeEach(async function () {
                 await this.ERC20.transfer(sender, initialSupplyGasToken, { from: initialHolder });
