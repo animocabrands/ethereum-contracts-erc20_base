@@ -1,6 +1,6 @@
 # Solidity Project ERC20 Base
 
-This project serves as a base dependency for Solidity-based contract projects by providing ERC20 related base contracts, constants, and interfaces.
+This project serves as a base dependency for Solidity-based ERC20 contract projects by providing related base contracts, constants, and interfaces.
 
 
 ## Table of Contents
