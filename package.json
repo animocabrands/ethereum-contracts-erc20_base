@@ -21,7 +21,7 @@
   "author": "Animoca Brands",
   "license": "MIT",
   "dependencies": {
-    "@animoca/ethereum-contracts-core_library": "^1.0.0",
+    "@animoca/ethereum-contracts-core_library": "^1.1.0",
     "@openzeppelin/gsn-helpers": "^0.2.3",
     "@openzeppelin/gsn-provider": "^0.1.10"
   }
