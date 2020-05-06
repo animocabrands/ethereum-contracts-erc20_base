@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 (06/05/2020)
+
+### Improvements
+ * Added missing `constant` keyword in Mocks.
+
 ## 1.0.0 (03/05/2020)
 
 ### Breaking changes
