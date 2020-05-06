@@ -5,9 +5,9 @@ import "../../../token/ERC20/IERC20Detailed.sol";
 
 contract ERC20FullMock is ERC20Full {
 
-    string public override name = "ERC20Full";
-    string public override symbol = "E2F";
-    uint8 public override decimals = 18;
+    string public override constant name = "ERC20Full";
+    string public override constant symbol = "E2F";
+    uint8 public override constant decimals = 18;
 
     constructor (uint256 initialBalance) public ERC20Full(initialBalance) {}
 

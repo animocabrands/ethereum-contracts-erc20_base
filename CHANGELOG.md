@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (06/05/2020)
+
+### Improvements
+ * Added missing `constant` keyword in Mocks.
+ * Updated dependency on `@animoca/ethereum-contracts-core_library` to `1.1.0`.
+
 ## 1.0.0 (03/05/2020)
 
 ### Breaking changes
