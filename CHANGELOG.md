@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 (Unreleased)
+
+### Updates
+ * Updated the @animoca/ethereum-contracts-core_library module dependency to ^2.0.0.
+
 ## 1.0.1 (06/05/2020)
 
 ### Improvements
