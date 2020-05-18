@@ -17,8 +17,8 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         RESTRICTED_METHOD
     }
 
-    IERC20 public _gasToken;
-    uint public _gasPriceScaling = GAS_PRICE_SCALING_SCALE;
+    IERC20 public gasToken;
+    uint public gasPriceScaling = GAS_PRICE_SCALING_SCALE;
 
     uint constant internal GAS_PRICE_SCALING_SCALE = 1000;
 
@@ -30,11 +30,11 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
     }
 
     function setGasToken(address gasTokenAddress) public onlyOwner {
-        _gasToken = IERC20(gasTokenAddress);
+        gasToken = IERC20(gasTokenAddress);
     }
 
-    function setGasPrice(uint gasPriceScaling) public onlyOwner {
-        _gasPriceScaling = gasPriceScaling;
+    function setGasPrice(uint gasPriceScaling_) public onlyOwner {
+        gasPriceScaling = gasPriceScaling_;
     }
 
     /**
@@ -65,7 +65,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         view
         returns (uint256, bytes memory)
     {
-        if (_gasToken.balanceOf(from) < (maxPossibleCharge * _gasPriceScaling / GAS_PRICE_SCALING_SCALE)) {
+        if (gasToken.balanceOf(from) < (maxPossibleCharge * gasPriceScaling / GAS_PRICE_SCALING_SCALE)) {
             return _rejectRelayedCall(uint256(ErrorCodes.INSUFFICIENT_BALANCE));
         }
 
@@ -82,7 +82,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         (address from, uint256 maxPossibleCharge) = abi.decode(context, (address, uint256));
 
         // The maximum token charge is pre-charged from the user
-        require(_gasToken.transferFrom(from, _payoutWallet, maxPossibleCharge * _gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(gasToken.transferFrom(from, _payoutWallet, maxPossibleCharge * gasPriceScaling / GAS_PRICE_SCALING_SCALE));
     }
 
     /**
@@ -99,7 +99,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         actualCharge = SafeMath.sub(actualCharge, overestimation);
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
-        require(_gasToken.transferFrom(_payoutWallet, from, SafeMath.sub(maxPossibleCharge, actualCharge) * _gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(gasToken.transferFrom(_payoutWallet, from, SafeMath.sub(maxPossibleCharge, actualCharge) * gasPriceScaling / GAS_PRICE_SCALING_SCALE));
     }
 
     /**
