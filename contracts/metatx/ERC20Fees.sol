@@ -65,7 +65,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         view
         returns (uint256, bytes memory)
     {
-        if (gasToken.balanceOf(from) < (maxPossibleCharge * gasPriceScaling / GAS_PRICE_SCALING_SCALE)) {
+        if (gasToken.balanceOf(from) < (SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE)) {
             return _rejectRelayedCall(uint256(ErrorCodes.INSUFFICIENT_BALANCE));
         }
 
@@ -82,7 +82,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         (address from, uint256 maxPossibleCharge) = abi.decode(context, (address, uint256));
 
         // The maximum token charge is pre-charged from the user
-        require(gasToken.transferFrom(from, _payoutWallet, maxPossibleCharge * gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(gasToken.transferFrom(from, _payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE));
     }
 
     /**
@@ -99,7 +99,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         actualCharge = SafeMath.sub(actualCharge, overestimation);
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
-        require(gasToken.transferFrom(_payoutWallet, from, SafeMath.sub(maxPossibleCharge, actualCharge) * gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(gasToken.transferFrom(_payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / GAS_PRICE_SCALING_SCALE));
     }
 
     /**
