@@ -5,7 +5,7 @@ import "./ERC20.sol";
 import "./IERC20Detailed.sol";
 
 abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
-    uint256 private constant UINT256_MAX = 2**256 - 1;
+    uint256 private constant UINT256_MAX = ~uint256(0);
 
     constructor(uint256 initialBalance) internal
     {
