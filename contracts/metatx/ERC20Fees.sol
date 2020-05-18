@@ -109,7 +109,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
      * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
      */
     function _msgSender() internal virtual override(Context, GSNRecipient) view returns (address payable) {
-        return super._msgSender();
+        return GSNRecipient._msgSender();
     }
 
     /**
@@ -119,6 +119,6 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
      * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
      */
     function _msgData() internal virtual override(Context, GSNRecipient) view returns (bytes memory) {
-        return super._msgData();
+        return GSNRecipient._msgData();
     }
 }
