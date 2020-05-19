@@ -1,9 +1,11 @@
 # Changelog
 
-## 1.0.2 (Unreleased)
+## 2.0.0 (19/05/2020)
 
-### Updates
+### Breaking changes
  * Updated the @animoca/ethereum-contracts-core_library module dependency to ^2.0.0.
+ * Added `ERC20.sol` and `ERC20WithOperators.sol`. Removed `ERC20Full.sol`. Refactored the unit tests.
+ * Applied naming convention on public members.
 
 ## 1.0.1 (06/05/2020)
 

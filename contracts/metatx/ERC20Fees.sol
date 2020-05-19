@@ -1,4 +1,6 @@
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.6.8;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/GSN/GSNRecipient.sol";
@@ -20,7 +22,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
     IERC20 public gasToken;
     uint public gasPriceScaling = GAS_PRICE_SCALING_SCALE;
 
-    uint constant internal GAS_PRICE_SCALING_SCALE = 1000;
+    uint internal constant GAS_PRICE_SCALING_SCALE = 1000;
 
     /**
      * @dev Constructor function
@@ -82,7 +84,10 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         (address from, uint256 maxPossibleCharge) = abi.decode(context, (address, uint256));
 
         // The maximum token charge is pre-charged from the user
-        require(gasToken.transferFrom(from, payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE));
+        require(
+            gasToken.transferFrom(from, payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE),
+            "ERC20Fees: pre-charge failed"
+        );
     }
 
     /**
@@ -99,7 +104,10 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         actualCharge = SafeMath.sub(actualCharge, overestimation);
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
-        require(gasToken.transferFrom(payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / GAS_PRICE_SCALING_SCALE));
+        require(
+            gasToken.transferFrom(payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / GAS_PRICE_SCALING_SCALE),
+            "ERC20Fees: send back change failed"
+        );
     }
 
     /**
