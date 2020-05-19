@@ -5,7 +5,7 @@ import "./ERC20.sol";
 import "./IERC20Detailed.sol";
 
 abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
-    uint256 private constant UINT256_MAX = 2**256 - 1;
+    uint256 private constant UINT256_MAX = ~uint256(0);
 
     constructor(uint256 initialBalance) internal
     {
@@ -34,6 +34,13 @@ abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
         );
     }
 
+    /**
+     * NOTICE
+     * This override will allow *any* whitelisted operator to be able to
+     * transfer unresitricted amounts of ERC20Full-based tokens from 'sender'
+     * to 'recipient'. Care must be taken to ensure to integrity of the
+     * whitelisted operator list.
+     */
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         address msgSender = _msgSender();
 

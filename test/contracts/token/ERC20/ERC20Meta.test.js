@@ -175,7 +175,7 @@ describe('ERC20 Meta', function () {
                 await sendWithoutGSN(
                     this.token.contract.methods.setGasToken(otherAccounts[0]),
                     initialHolder);
-                const gasToken = await this.token.contract.methods._gasToken().call();
+                const gasToken = await this.token.contract.methods.gasToken().call();
                 gasToken.should.be.equal(otherAccounts[0]);
             });
         });
@@ -199,7 +199,7 @@ describe('ERC20 Meta', function () {
                 await sendWithoutGSN(
                     this.token.contract.methods.setGasPrice(newGasPrice),
                     initialHolder);
-                const newPrice = await this.token._gasPriceScaling();
+                const newPrice = await this.token.gasPriceScaling();
                 newPrice.toString().should.be.equal(newGasPrice);
             });
         });
