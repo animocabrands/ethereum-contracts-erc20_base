@@ -67,9 +67,7 @@ abstract contract ERC20 is ERC165, Context, IERC20, IERC20Detailed, IERC20Allowa
     using Address for address;
 
     mapping (address => uint256) internal _balances;
-
     mapping (address => mapping (address => uint256)) internal _allowances;
-
     uint256 internal _totalSupply;
 
     constructor() internal {
@@ -278,8 +276,6 @@ abstract contract ERC20 is ERC165, Context, IERC20, IERC20Detailed, IERC20Allowa
      * - when `from` is zero, `amount` tokens will be minted for `to`.
      * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
      * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
 }
