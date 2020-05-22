@@ -3,9 +3,13 @@
 ## 2.0.0 (19/05/2020)
 
 ### Breaking changes
- * Updated the @animoca/ethereum-contracts-core_library module dependency to ^2.0.0.
+ * Updated the `@animoca/ethereum-contracts-core_library` module dependency to ^2.0.0.
  * Added `ERC20.sol` and `ERC20WithOperators.sol`. Removed `ERC20Full.sol`. Refactored the unit tests.
+ * Migrated compiler to `solc:0.6.8`.
  * Applied naming convention on public members.
+
+### Improvements
+ * Support of new ERC165 interface for allowance functions.
 
 ## 1.0.1 (06/05/2020)
 

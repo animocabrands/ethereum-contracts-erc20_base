@@ -459,7 +459,8 @@ function shouldBehaveLikeERC20(name, symbol, decimals, initialSupply, initialHol
             interfaces.ERC20Name,
             interfaces.ERC20Symbol,
             interfaces.ERC20Decimals,
-            interfaces.ERC20Detailed_Experimental
+            interfaces.ERC20Detailed_Experimental,
+            interfaces.ERC20Allowance_Experimental
         ]);
     });
 }
