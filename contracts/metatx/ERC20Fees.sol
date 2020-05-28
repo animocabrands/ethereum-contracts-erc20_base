@@ -1,4 +1,6 @@
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.6.8;
 
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/GSN/GSNRecipient.sol";
@@ -17,10 +19,10 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         RESTRICTED_METHOD
     }
 
-    IERC20 public _gasToken;
-    uint public _gasPriceScaling = GAS_PRICE_SCALING_SCALE;
+    IERC20 public gasToken;
+    uint public gasPriceScaling = _GAS_PRICE_SCALING_SCALE;
 
-    uint constant internal GAS_PRICE_SCALING_SCALE = 1000;
+    uint internal constant _GAS_PRICE_SCALING_SCALE = 1000;
 
     /**
      * @dev Constructor function
@@ -30,11 +32,11 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
     }
 
     function setGasToken(address gasTokenAddress) public onlyOwner {
-        _gasToken = IERC20(gasTokenAddress);
+        gasToken = IERC20(gasTokenAddress);
     }
 
-    function setGasPrice(uint gasPriceScaling) public onlyOwner {
-        _gasPriceScaling = gasPriceScaling;
+    function setGasPrice(uint gasPriceScaling_) public onlyOwner {
+        gasPriceScaling = gasPriceScaling_;
     }
 
     /**
@@ -65,7 +67,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         view
         returns (uint256, bytes memory)
     {
-        if (_gasToken.balanceOf(from) < (maxPossibleCharge * _gasPriceScaling / GAS_PRICE_SCALING_SCALE)) {
+        if (gasToken.balanceOf(from) < (SafeMath.mul(maxPossibleCharge, gasPriceScaling) / _GAS_PRICE_SCALING_SCALE)) {
             return _rejectRelayedCall(uint256(ErrorCodes.INSUFFICIENT_BALANCE));
         }
 
@@ -82,7 +84,10 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         (address from, uint256 maxPossibleCharge) = abi.decode(context, (address, uint256));
 
         // The maximum token charge is pre-charged from the user
-        require(_gasToken.transferFrom(from, _payoutWallet, maxPossibleCharge * _gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(
+            gasToken.transferFrom(from, payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / _GAS_PRICE_SCALING_SCALE),
+            "ERC20Fees: pre-charge failed"
+        );
     }
 
     /**
@@ -99,7 +104,30 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         actualCharge = SafeMath.sub(actualCharge, overestimation);
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
-        require(_gasToken.transferFrom(_payoutWallet, from, SafeMath.sub(maxPossibleCharge, actualCharge) * _gasPriceScaling / GAS_PRICE_SCALING_SCALE));
+        require(
+            gasToken.transferFrom(payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / _GAS_PRICE_SCALING_SCALE),
+            "ERC20Fees: send back change failed"
+        );
+    }
+
+    /**
+     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
+     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
+     */
+    function _msgSender() internal virtual override(Context, GSNRecipient) view returns (address payable) {
+        return GSNRecipient._msgSender();
+    }
+
+    /**
+     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
+     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
+     *
+     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
+     */
+    function _msgData() internal virtual override(Context, GSNRecipient) view returns (bytes memory) {
+        return GSNRecipient._msgData();
     }
 
     /**

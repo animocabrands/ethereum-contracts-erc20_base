@@ -1,12 +1,13 @@
-const GasToken = artifacts.require('ERC20FullMock');
+const GasToken = artifacts.require('ERC20WithOperatorsMock');
 const MetaCoin = artifacts.require('ERC20MetaMock');
 
 module.exports = async (deployer, network, accounts) => {
-    const gasTokenBalance = "1000000";
-    const coinBalance = "1000000";
-    const payoutWallet = "0xc974C5f0C5b0662E00a54139C039273608b74754";
+    const gasTokenBalance = '1000000';
+    const coinBalance = '1000000';
+    const payoutWallet = accounts[1];
 
     await deployer.deploy(GasToken, gasTokenBalance);
     const gasToken = await GasToken.deployed();
-    await deployer.deploy(MetaCoin, coinBalance, gasToken.address, payoutWallet);
+    const metaCoin = await deployer.deploy(MetaCoin, coinBalance, gasToken.address, payoutWallet);
+    await gasToken.whitelistOperator(metaCoin.address, true);
 }
