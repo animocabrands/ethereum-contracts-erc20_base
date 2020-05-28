@@ -25,13 +25,17 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.6.8;
 
 import "@openzeppelin/contracts/GSN/Context.sol";
-import "@openzeppelin/contracts/introspection/IERC165.sol";
+import "@openzeppelin/contracts/introspection/ERC165.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./IERC20.sol";
+import "./IERC20Detailed.sol";
+import "./IERC20Allowance.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -57,29 +61,29 @@ import "./IERC20.sol";
  * functions have been added to mitigate the well-known issues around setting
  * allowances. See {IERC20-approve}.
  */
-contract ERC20 is Context, IERC165, IERC20 {
+abstract contract ERC20 is ERC165, Context, IERC20, IERC20Detailed, IERC20Allowance {
+
     using SafeMath for uint256;
     using Address for address;
 
-    mapping (address => uint256) private _balances;
+    mapping (address => uint256) internal _balances;
+    mapping (address => mapping (address => uint256)) internal _allowances;
+    uint256 internal _totalSupply;
 
-    mapping (address => mapping (address => uint256)) private _allowances;
+    constructor() internal {
+        _registerInterface(type(IERC20).interfaceId);
+        _registerInterface(type(IERC20Detailed).interfaceId);
+        _registerInterface(type(IERC20Allowance).interfaceId);
 
-    uint256 private _totalSupply;
-
-    /**
-     * @dev Check if support an interface id
-     * @param interfaceId interface id to query
-     * @return bool if support the given interface id
-     */
-    function supportsInterface(bytes4 interfaceId) external virtual override view returns (bool) {
-        return (
-            // ERC165 interface id
-            interfaceId == 0x01ffc9a7 ||
-            // ERC20 interface id
-            interfaceId == 0x36372b07
-        );
+        // ERC20Name interfaceId: bytes4(keccak256("name()"))
+        _registerInterface(0x06fdde03);
+        // ERC20Symbol interfaceId: bytes4(keccak256("symbol()"))
+        _registerInterface(0x95d89b41);
+        // ERC20Decimals interfaceId: bytes4(keccak256("decimals()"))
+        _registerInterface(0x313ce567);
     }
+
+/////////////////////////////////////////// ERC20 ///////////////////////////////////////
 
     /**
      * @dev See {IERC20-totalSupply}.
@@ -145,41 +149,33 @@ contract ERC20 is Context, IERC165, IERC20 {
         return true;
     }
 
+/////////////////////////////////////////// ERC20Allowance ///////////////////////////////////////
+
     /**
-     * @dev Atomically increases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
+     * @dev See {IERC20Allowance-increaseAllowance}.
      */
-    function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+    function increaseAllowance(
+        address spender,
+        uint256 addedValue
+    ) public virtual override returns (bool)
+    {
         _approve(_msgSender(), spender, _allowances[_msgSender()][spender].add(addedValue));
         return true;
     }
 
     /**
-     * @dev Atomically decreases the allowance granted to `spender` by the caller.
-     *
-     * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IERC20-approve}.
-     *
-     * Emits an {Approval} event indicating the updated allowance.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `spender` must have allowance for the caller of at least
-     * `subtractedValue`.
+     * @dev See {IERC20Allowance-decreaseAllowance}.
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public virtual override returns (bool)
+    {
         _approve(_msgSender(), spender, _allowances[_msgSender()][spender].sub(subtractedValue, "ERC20: decreased allowance below zero"));
         return true;
     }
+
+/////////////////////////////////////////// Internal Functions ///////////////////////////////////////
 
     /**
      * @dev Moves tokens `amount` from `sender` to `recipient`.
@@ -267,6 +263,8 @@ contract ERC20 is Context, IERC165, IERC20 {
         emit Approval(owner, spender, amount);
     }
 
+/////////////////////////////////////////// Hooks ///////////////////////////////////////
+
     /**
      * @dev Hook that is called before any transfer of tokens. This includes
      * minting and burning.
@@ -278,8 +276,6 @@ contract ERC20 is Context, IERC165, IERC20 {
      * - when `from` is zero, `amount` tokens will be minted for `to`.
      * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
      * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
 }

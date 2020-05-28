@@ -1,39 +1,19 @@
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.6.8;
 
 import "@animoca/ethereum-contracts-core_library/contracts/access/WhitelistedOperators.sol";
 import "./ERC20.sol";
-import "./IERC20Detailed.sol";
 
-abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
-    uint256 private constant UINT256_MAX = 2**256 - 1;
-
-    constructor(uint256 initialBalance) internal
-    {
-        _mint(_msgSender(), initialBalance);
-    }
+abstract contract ERC20WithOperators is ERC20, WhitelistedOperators {
 
     /**
-     * @dev Check if support an interface id
-     * @param interfaceId interface id to query
-     * @return bool if support the given interface id
+     * NOTICE
+     * This override will allow *any* whitelisted operator to be able to
+     * transfer unresitricted amounts of ERC20WithOperators-based tokens from 'sender'
+     * to 'recipient'. Care must be taken to ensure to integrity of the
+     * whitelisted operator list.
      */
-    function supportsInterface(bytes4 interfaceId) external virtual override view returns (bool) {
-        return (
-            // ERC165 interface id
-            interfaceId == 0x01ffc9a7 ||
-            // ERC20 interface id
-            interfaceId == 0x36372b07 ||
-            // ERC20Name interface id
-            interfaceId == 0x06fdde03 ||
-            // ERC20Symbol interface id
-            interfaceId == 0x95d89b41 ||
-            // ERC20Decimals interface id
-            interfaceId == 0x313ce567 ||
-            // ERC20Detailed interface id
-            interfaceId == 0xa219a025
-        );
-    }
-
     function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
         address msgSender = _msgSender();
 
@@ -56,7 +36,7 @@ abstract contract ERC20Full is ERC20, IERC20Detailed, WhitelistedOperators {
             // spender is unknown. A call to WhitelistedOperators::isOperator()
             // is more direct, but we want to expose a mechanism by which to
             // check through the ERC20 interface.
-            return UINT256_MAX;
+            return type(uint256).max;
         } else {
             return super.allowance(owner, spender);
         }
