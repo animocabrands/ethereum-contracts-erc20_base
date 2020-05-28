@@ -27,6 +27,11 @@ const ERC20Detailed_Functions = [
     'decimals()'
 ];
 
+const ERC20Allowance_Functions = [
+    'increaseAllowance(address,uint256)',
+    'decreaseAllowance(address,uint256)'
+];
+
 module.exports = {
     ERC20: {
         name: 'ERC20',
@@ -53,4 +58,9 @@ module.exports = {
         functions: ERC20Detailed_Functions,
         id: makeInterfaceId.ERC165(ERC20Detailed_Functions),
     }, // '0xa219a025'
+    ERC20Allowance_Experimental: {
+        name: 'ERC20Allowance_Experimental',
+        functions: ERC20Allowance_Functions,
+        id: makeInterfaceId.ERC165(ERC20Allowance_Functions),
+    }, // '0x9d075186'
 }

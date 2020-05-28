@@ -1,11 +1,13 @@
-pragma solidity ^0.6.6;
+// SPDX-License-Identifier: MIT
 
-import "../../../token/ERC20/ERC20Full.sol";
+pragma solidity ^0.6.8;
+
 import "../../../metatx/ERC20Fees.sol";
+import "../../../token/ERC20/ERC20.sol";
 
-contract ERC20MetaMock is ERC20Full, ERC20Fees {
+contract ERC20MetaMock is ERC20Fees, ERC20 {
 
-    uint256 public _state = 0;
+    uint256 public state = 0;
 
     string public override constant name = "ERC20Meta";
     string public override constant symbol = "E2M";
@@ -15,10 +17,17 @@ contract ERC20MetaMock is ERC20Full, ERC20Fees {
         uint256 initialBalance,
         address gasTokenAddress,
         address payoutWallet
-    ) public ERC20Full(initialBalance) ERC20Fees(gasTokenAddress, payoutWallet) {}
+    ) public ERC20Fees(gasTokenAddress, payoutWallet)
+    {
+        _mint(_msgSender(), initialBalance);
+    }
+
+    function underscoreApprove(address owner, address spender, uint256 value) public {
+        super._approve(owner, spender, value);
+    }
 
     function anUnrelayableFunction() public returns (bytes4) {
-        _state = _state + 1;
+        state = state + 1;
         // bytes4(keccak256("anUnrelayableFunction()")) == 0x2f398d8d
         return bytes4(keccak256("anUnrelayableFunction()"));
     }
@@ -71,22 +80,10 @@ contract ERC20MetaMock is ERC20Full, ERC20Fees {
             maxPossibleCharge);
     }
 
-    /**
-     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
-     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
-     */
     function _msgSender() internal override(Context, ERC20Fees) view returns (address payable) {
         return super._msgSender();
     }
 
-    /**
-     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
-     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
-     */
     function _msgData() internal override(Context, ERC20Fees) view returns (bytes memory) {
         return super._msgData();
     }
