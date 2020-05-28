@@ -20,9 +20,9 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
     }
 
     IERC20 public gasToken;
-    uint public gasPriceScaling = GAS_PRICE_SCALING_SCALE;
+    uint public gasPriceScaling = _GAS_PRICE_SCALING_SCALE;
 
-    uint internal constant GAS_PRICE_SCALING_SCALE = 1000;
+    uint internal constant _GAS_PRICE_SCALING_SCALE = 1000;
 
     /**
      * @dev Constructor function
@@ -67,7 +67,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         view
         returns (uint256, bytes memory)
     {
-        if (gasToken.balanceOf(from) < (SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE)) {
+        if (gasToken.balanceOf(from) < (SafeMath.mul(maxPossibleCharge, gasPriceScaling) / _GAS_PRICE_SCALING_SCALE)) {
             return _rejectRelayedCall(uint256(ErrorCodes.INSUFFICIENT_BALANCE));
         }
 
@@ -85,7 +85,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
 
         // The maximum token charge is pre-charged from the user
         require(
-            gasToken.transferFrom(from, payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / GAS_PRICE_SCALING_SCALE),
+            gasToken.transferFrom(from, payoutWallet, SafeMath.mul(maxPossibleCharge, gasPriceScaling) / _GAS_PRICE_SCALING_SCALE),
             "ERC20Fees: pre-charge failed"
         );
     }
@@ -105,7 +105,7 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
 
         // After the relayed call has been executed and the actual charge estimated, the excess pre-charge is returned
         require(
-            gasToken.transferFrom(payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / GAS_PRICE_SCALING_SCALE),
+            gasToken.transferFrom(payoutWallet, from, SafeMath.mul(SafeMath.sub(maxPossibleCharge, actualCharge), gasPriceScaling) / _GAS_PRICE_SCALING_SCALE),
             "ERC20Fees: send back change failed"
         );
     }
