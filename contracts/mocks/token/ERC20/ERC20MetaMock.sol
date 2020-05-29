@@ -13,10 +13,6 @@ contract ERC20MetaMock is ERC20Fees, ERC20 {
     string public override constant symbol = "E2M";
     uint8 public override constant decimals = 18;
 
-    string public override constant name = "ERC20Meta";
-    string public override constant symbol = "E2M";
-    uint8 public override constant decimals = 18;
-
     constructor (
         uint256 initialBalance,
         address gasTokenAddress,
