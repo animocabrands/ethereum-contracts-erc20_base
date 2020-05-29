@@ -110,43 +110,11 @@ abstract contract ERC20Fees is GSNRecipient, PayoutWallet
         );
     }
 
-    /**
-     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
-     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
-     */
     function _msgSender() internal virtual override(Context, GSNRecipient) view returns (address payable) {
         return GSNRecipient._msgSender();
     }
 
-    /**
-     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
-     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
-     */
     function _msgData() internal virtual override(Context, GSNRecipient) view returns (bytes memory) {
         return GSNRecipient._msgData();
-    }
-
-    /**
-     * @dev Replacement for msg.sender. Returns the actual sender of a transaction: msg.sender for regular transactions,
-     * and the end-user for GSN relayed calls (where msg.sender is actually `RelayHub`).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.sender`, and use {_msgSender} instead.
-     */
-    function _msgSender() internal virtual override(Context, GSNRecipient) view returns (address payable) {
-        return super._msgSender();
-    }
-
-    /**
-     * @dev Replacement for msg.data. Returns the actual calldata of a transaction: msg.data for regular transactions,
-     * and a reduced version for GSN relayed calls (where msg.data contains additional information).
-     *
-     * IMPORTANT: Contracts derived from {GSNRecipient} should never use `msg.data`, and use {_msgData} instead.
-     */
-    function _msgData() internal virtual override(Context, GSNRecipient) view returns (bytes memory) {
-        return super._msgData();
     }
 }

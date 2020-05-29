@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1 (28/05/2020)
+
+### Bugfixes
+ * Removed merge artifacts.
+
 ## 2.0.0 (27/05/2020)
 
 ### Breaking changes
