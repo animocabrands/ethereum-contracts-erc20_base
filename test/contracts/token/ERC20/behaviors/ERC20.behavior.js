@@ -1,5 +1,5 @@
 const { BN, expectEvent, expectRevert } = require('@openzeppelin/test-helpers');
-const { constants, shouldSupportInterfaces } = require('@animoca/ethereum-contracts-core_library');
+const { constants, behaviors } = require('@animoca/ethereum-contracts-core_library');
 const { ZeroAddress } = constants;
 const interfaces = require('../../../../../src/interfaces/ERC165');
 
@@ -454,7 +454,7 @@ function shouldBehaveLikeERC20(name, symbol, decimals, initialSupply, initialHol
             });
         });
 
-        shouldSupportInterfaces([
+        behaviors.shouldSupportInterfaces([
             interfaces.ERC20,
             interfaces.ERC20Name,
             interfaces.ERC20Symbol,
