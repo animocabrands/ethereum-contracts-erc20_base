@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.0.0 (17/06/2020)
+
+### Breaking changes
+ * Contracts compiler version fixed at solidity 0.6.8.
+ * Updated `@animoca/ethereum-contracts-core_library` to version 3 and downgraded it to be a dev dependency.
+
 ## 2.0.0 (27/05/2020)
 
 ### Breaking changes
