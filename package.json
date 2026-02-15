@@ -25,6 +25,6 @@
     "@openzeppelin/gsn-provider": "^0.1.10"
   },
   "devDependencies": {
-    "@animoca/ethereum-contracts-core_library": "^3.0.0"
+    "@animoca/ethereum-contracts-core_library": "^4.0.3"
   }
 }
